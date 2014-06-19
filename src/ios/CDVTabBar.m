@@ -2,7 +2,7 @@
  *  CDVTabBar
  *
  *  Based on:
- *  
+ *
  *  NativeControls
  *  Created by Jesse MacFadyen on 10-02-03.
  *  MIT Licensed
@@ -26,8 +26,8 @@
 
 - (void)pluginInitialize
 {
-  tabBarItems = [[NSMutableDictionary alloc] initWithCapacity:5];
-  originalWebViewBounds = self.webView.bounds;
+    tabBarItems = [[NSMutableDictionary alloc] initWithCapacity:5];
+    originalWebViewBounds = self.webView.bounds;
 }
 
 #pragma mark - Listener
@@ -36,11 +36,11 @@
  */
 -(void)bindListener:(CDVInvokedUrlCommand*)command
 {
-  self.listenerCallbackId = command.callbackId;
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [pluginResult setKeepCallbackAsBool:true];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    self.listenerCallbackId = command.callbackId;
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [pluginResult setKeepCallbackAsBool:true];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 #pragma mark - TabBar
@@ -57,34 +57,34 @@
 	tabBar.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
 	[tabBar sizeToFit];
 	tabBar.delegate = self;
-  
-  if ( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
-    tabBar.barStyle = UIBarStyleBlack;
-    tabBar.translucent = NO;
-    tabBar.barTintColor = [UIColor colorWithRed:0.122 green:0.122 blue:0.122 alpha:1]; /*#1f1f1f*/
-    tabBar.tintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1]; /*#ffffff*/
-  } else {
-    // Pre iOS 7
-    tabBar.opaque = YES;
-  }
+
+    if ( SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
+        tabBar.barStyle = UIBarStyleBlack;
+        tabBar.translucent = NO;
+        tabBar.barTintColor = [UIColor colorWithRed:0.122 green:0.122 blue:0.122 alpha:1]; /*#1f1f1f*/
+        tabBar.tintColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1]; /*#ffffff*/
+    } else {
+        // Pre iOS 7
+        tabBar.opaque = YES;
+    }
 	tabBar.multipleTouchEnabled   = NO;
 	tabBar.autoresizesSubviews    = YES;
 	tabBar.hidden                 = YES;
 	tabBar.userInteractionEnabled = YES;
-	
-  self.webView.superview.autoresizesSubviews = YES;
-	
+
+    self.webView.superview.autoresizesSubviews = YES;
+
 	/* Styling hints REF UIInterface.h
-	 
+
 	 tabBar.alpha = 0.5;
 	 tabBar.tintColor = [UIColor colorWithRed:1.000 green:0.000 blue:0.000 alpha:1.000];
-	 
+
 	 */
-	
+
 	[self.webView.superview addSubview:tabBar];
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /**
@@ -97,78 +97,76 @@
  */
 - (void)showTabBar:(CDVInvokedUrlCommand*)command
 {
-  
-  NSDictionary *options = [command.arguments objectAtIndex:0];
-  
-  if (!tabBar)
-    [self createTabBar:nil];
-	
+
+    NSDictionary *options = [command.arguments objectAtIndex:0];
+
+    if (!tabBar) {
+        [self createTabBar:nil];
+    }
+
 	// if we are calling this again when its shown, reset
 	if (!tabBar.hidden) {
 		return;
 	}
-  
-  CGFloat height = 0.0f;
-  BOOL atBottom = YES;
-	
-  //	CGRect offsetRect = [ [UIApplication sharedApplication] statusBarFrame];
-  
-  if (options)
+
+    CGFloat height = 0.0f;
+    BOOL atBottom = YES;
+
+    //	CGRect offsetRect = [ [UIApplication sharedApplication] statusBarFrame];
+
+    if (options)
 	{
-    height   = [[options objectForKey:@"height"] floatValue];
-    atBottom = [[options objectForKey:@"position"] isEqualToString:@"bottom"];
-  }
+        height   = [[options objectForKey:@"height"] floatValue];
+        atBottom = [[options objectForKey:@"position"] isEqualToString:@"bottom"];
+    }
 	if(height == 0)
 	{
 		height = 49.0f;
 		atBottom = YES;
 	}
-	
-  tabBar.hidden = NO;
-  CGRect webViewBounds = originalWebViewBounds;
-  CGRect tabBarBounds;
-	
+
+    tabBar.hidden = NO;
+    CGRect webViewBounds = originalWebViewBounds;
+    CGRect tabBarBounds;
+
 	NSNotification* notif = [NSNotification notificationWithName:@"CDVLayoutSubviewAdded" object:tabBar];
 	[[NSNotificationQueue defaultQueue] enqueueNotification:notif postingStyle: NSPostASAP];
-	
-  if (atBottom)
-  {
-    tabBarBounds = CGRectMake(
-                              webViewBounds.origin.x,
-                              webViewBounds.origin.y + webViewBounds.size.height - height,
-                              webViewBounds.size.width,
-                              height
-                              );
-    webViewBounds = CGRectMake(
-                               webViewBounds.origin.x,
-                               webViewBounds.origin.y,
-                               webViewBounds.size.width,
-                               webViewBounds.size.height - height
-                               );
-  }
-  else
-  {
-    tabBarBounds = CGRectMake(
-                              webViewBounds.origin.x,
-                              webViewBounds.origin.y,
-                              webViewBounds.size.width,
-                              height
-                              );
-    webViewBounds = CGRectMake(
-                               webViewBounds.origin.x,
-                               webViewBounds.origin.y + height,
-                               webViewBounds.size.width,
-                               webViewBounds.size.height - height
-                               );
-  }
-  
-  [tabBar setFrame:tabBarBounds];
-	
-	
-  [self.webView setFrame:webViewBounds];
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+    if (atBottom) {
+        tabBarBounds = CGRectMake(
+                                  webViewBounds.origin.x,
+                                  webViewBounds.origin.y + webViewBounds.size.height - height,
+                                  webViewBounds.size.width,
+                                  height
+                                  );
+        webViewBounds = CGRectMake(
+                                   webViewBounds.origin.x,
+                                   webViewBounds.origin.y,
+                                   webViewBounds.size.width,
+                                   webViewBounds.size.height - height
+                                   );
+    } else {
+        tabBarBounds = CGRectMake(
+                                  webViewBounds.origin.x,
+                                  webViewBounds.origin.y,
+                                  webViewBounds.size.width,
+                                  height
+                                  );
+        webViewBounds = CGRectMake(
+                                   webViewBounds.origin.x,
+                                   webViewBounds.origin.y + height,
+                                   webViewBounds.size.width,
+                                   webViewBounds.size.height - height
+                                   );
+    }
+
+    [tabBar setFrame:tabBarBounds];
+
+
+    [self.webView setFrame:webViewBounds];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /**
@@ -179,17 +177,18 @@
  */
 - (void)hideTabBar:(CDVInvokedUrlCommand*)command
 {
-  if (!tabBar)
-    [self createTabBar:nil];
+    if (!tabBar) {
+        [self createTabBar:nil];
+    }
 	tabBar.hidden = YES;
-  
+
 	NSNotification* notif = [NSNotification notificationWithName:@"CDVLayoutSubviewRemoved" object:tabBar];
 	[[NSNotificationQueue defaultQueue] enqueueNotification:notif postingStyle: NSPostASAP];
-	
+
 	[self.webView setFrame:originalWebViewBounds];
 
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /**
@@ -221,49 +220,97 @@
  */
 - (void)createTabBarItem:(CDVInvokedUrlCommand*)command
 {
-  
-  NSArray *arguments = command.arguments;
-  NSDictionary *options = [arguments objectAtIndex:4];
-  
-  if (!tabBar)
-    [self createTabBar:nil];
-  
-  NSString  *name      = [arguments objectAtIndex:0];
-  NSString  *title     = [arguments objectAtIndex:1];
-  NSString  *imageName = [arguments objectAtIndex:2];
-  int tag              = [[arguments objectAtIndex:3] intValue];
-  
-  UITabBarItem *item = nil;
-  if ([imageName length] > 0) {
-    UITabBarSystemItem systemItem = -1;
-    if ([imageName isEqualToString:@"tabButton:More"])       systemItem = UITabBarSystemItemMore;
-    if ([imageName isEqualToString:@"tabButton:Favorites"])  systemItem = UITabBarSystemItemFavorites;
-    if ([imageName isEqualToString:@"tabButton:Featured"])   systemItem = UITabBarSystemItemFeatured;
-    if ([imageName isEqualToString:@"tabButton:TopRated"])   systemItem = UITabBarSystemItemTopRated;
-    if ([imageName isEqualToString:@"tabButton:Recents"])    systemItem = UITabBarSystemItemRecents;
-    if ([imageName isEqualToString:@"tabButton:Contacts"])   systemItem = UITabBarSystemItemContacts;
-    if ([imageName isEqualToString:@"tabButton:History"])    systemItem = UITabBarSystemItemHistory;
-    if ([imageName isEqualToString:@"tabButton:Bookmarks"])  systemItem = UITabBarSystemItemBookmarks;
-    if ([imageName isEqualToString:@"tabButton:Search"])     systemItem = UITabBarSystemItemSearch;
-    if ([imageName isEqualToString:@"tabButton:Downloads"])  systemItem = UITabBarSystemItemDownloads;
-    if ([imageName isEqualToString:@"tabButton:MostRecent"]) systemItem = UITabBarSystemItemMostRecent;
-    if ([imageName isEqualToString:@"tabButton:MostViewed"]) systemItem = UITabBarSystemItemMostViewed;
-    if (systemItem != -1)
-      item = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:tag];
-  }
-  
-  if (item == nil) {
-    item = [[UITabBarItem alloc] initWithTitle:title image:[UIImage imageNamed:imageName] tag:tag];
-  }
-  
-  // Set badge if needed
-  if ([options objectForKey:@"badge"])
-    item.badgeValue = [options objectForKey:@"badge"];
-  
-  [tabBarItems setObject:item forKey:name];
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    NSArray *arguments = command.arguments;
+    NSDictionary *options = [arguments objectAtIndex:4];
+
+    if (!tabBar) {
+        [self createTabBar:nil];
+    }
+
+    NSString  *name      = [arguments objectAtIndex:0];
+    NSString  *title     = [arguments objectAtIndex:1];
+    NSString  *imageName = [arguments objectAtIndex:2];
+    int tag              = [[arguments objectAtIndex:3] intValue];
+
+    if (![imageName isKindOfClass:[NSString class]]) {
+        imageName = nil;
+    }
+
+    UITabBarItem *item;
+    if ([imageName length] > 0) {
+        UITabBarSystemItem systemItem;
+        BOOL buttonIsSystemImage = NO;
+        if ([imageName isEqualToString:@"tabButton:More"]) {
+            systemItem = UITabBarSystemItemMore;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Favorites"]) {
+            systemItem = UITabBarSystemItemFavorites;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Featured"]) {
+            systemItem = UITabBarSystemItemFeatured;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:TopRated"]) {
+            systemItem = UITabBarSystemItemTopRated;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Recents"]) {
+            systemItem = UITabBarSystemItemRecents;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Contacts"]) {
+            systemItem = UITabBarSystemItemContacts;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:History"]) {
+            systemItem = UITabBarSystemItemHistory;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Bookmarks"]) {
+            systemItem = UITabBarSystemItemBookmarks;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Search"]) {
+            systemItem = UITabBarSystemItemSearch;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:Downloads"]) {
+            systemItem = UITabBarSystemItemDownloads;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:MostRecent"]) {
+            systemItem = UITabBarSystemItemMostRecent;
+            buttonIsSystemImage = YES;
+        }
+        if ([imageName isEqualToString:@"tabButton:MostViewed"]) {
+            systemItem = UITabBarSystemItemMostViewed;
+            buttonIsSystemImage = YES;
+        }
+        if (buttonIsSystemImage)
+            item = [[UITabBarItem alloc] initWithTabBarSystemItem:systemItem tag:tag];
+    }
+
+    if (!item) {
+        UIImage *image;
+        if (imageName) {
+            image = [UIImage imageNamed:imageName];
+        }
+        item = [[UITabBarItem alloc] initWithTitle:title image:image tag:tag];
+    }
+
+    // Set badge if needed
+    if (![options isKindOfClass:[NSNull class]]) {
+        if ([options objectForKey:@"badge"]) {
+            item.badgeValue = [options objectForKey:@"badge"];
+        }
+    }
+
+    [tabBarItems setObject:item forKey:name];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
@@ -277,20 +324,22 @@
  */
 - (void)updateTabBarItem:(CDVInvokedUrlCommand*)command
 {
-  
-  NSArray *arguments = command.arguments;
-  NSDictionary *options = [arguments objectAtIndex:1];
-  
-  if (!tabBar)
-    [self createTabBar:nil];
-  
-  NSString  *name = [arguments objectAtIndex:0];
-  UITabBarItem *item = [tabBarItems objectForKey:name];
-  if (item)
-    item.badgeValue = [options objectForKey:@"badge"];
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+    NSArray *arguments = command.arguments;
+    NSDictionary *options = [arguments objectAtIndex:1];
+
+    if (!tabBar) {
+        [self createTabBar:nil];
+    }
+
+    NSString  *name = [arguments objectAtIndex:0];
+    UITabBarItem *item = [tabBarItems objectForKey:name];
+    if (item) {
+        item.badgeValue = [options objectForKey:@"badge"];
+    }
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
@@ -305,31 +354,33 @@
  */
 - (void)showTabBarItems:(CDVInvokedUrlCommand*)command
 {
-  
-  NSArray *arguments = command.arguments;
-  int count = [arguments count];
-  //NSDictionary *options = [arguments objectAtIndex:];
-  
-  if (!tabBar)
-    [self createTabBar:nil];
-  
-  NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
-  for (int i = 0; i < count; i++) {
-    NSString *itemName = [arguments objectAtIndex:i];
-    UITabBarItem *item = [tabBarItems objectForKey:itemName];
-    if (item)
-      [items addObject:item];
-  }
-  
-  BOOL animateItems = NO;
-  /*
-   if ([options objectForKey:@"animate"])
-   animateItems = [(NSString*)[options objectForKey:@"animate"] boolValue];
-   */
-  [tabBar setItems:items animated:animateItems];
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+    NSArray *arguments = command.arguments;
+    int count = [arguments count];
+    //NSDictionary *options = [arguments objectAtIndex:];
+
+    if (!tabBar) {
+        [self createTabBar:nil];
+    }
+
+    NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        NSString *itemName = [arguments objectAtIndex:i];
+        UITabBarItem *item = [tabBarItems objectForKey:itemName];
+        if (item) {
+            [items addObject:item];
+        }
+    }
+
+    BOOL animateItems = NO;
+    /*
+     if ([options objectForKey:@"animate"])
+     animateItems = [(NSString*)[options objectForKey:@"animate"] boolValue];
+     */
+    [tabBar setItems:items animated:animateItems];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 /**
@@ -341,28 +392,30 @@
  */
 - (void)selectTabBarItem:(CDVInvokedUrlCommand*)command
 {
-  NSArray *arguments = command.arguments;
-  
-  if (!tabBar)
-    [self createTabBar:nil];
-  
-  NSString *itemName = [arguments objectAtIndex:0];
-  UITabBarItem *item = [tabBarItems objectForKey:itemName];
-  if (item)
-    tabBar.selectedItem = item;
-  else
-    tabBar.selectedItem = nil;
-  
-  CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    NSArray *arguments = command.arguments;
+
+    if (!tabBar) {
+        [self createTabBar:nil];
+    }
+
+    NSString *itemName = [arguments objectAtIndex:0];
+    UITabBarItem *item = [tabBarItems objectForKey:itemName];
+    if (item) {
+        tabBar.selectedItem = item;
+    } else {
+        tabBar.selectedItem = nil;
+    }
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
 	// Create Plugin Result
 	CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:item.tag];
-  [pluginResult setKeepCallbackAsBool:true];
-  [self.commandDelegate sendPluginResult:pluginResult callbackId:self.listenerCallbackId];
+    [pluginResult setKeepCallbackAsBool:true];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.listenerCallbackId];
 }
 
 @end

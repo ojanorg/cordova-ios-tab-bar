@@ -21,6 +21,7 @@ function TabBar() {
 
     this.tabBarTag = 0;
     this.toolBarIndexes = 0;
+    this.tabBarItems = [];
 
     this.tabBarCallbacks = {};
     this.toolBarCallbacks = {};
@@ -85,10 +86,13 @@ TabBar.prototype.hideTabBar = function ( animate ) {
 TabBar.prototype.createTabBarItem = function ( name, label, image, options ) {
 
     var tag = this.tabBarTag++;
-    if ( options && 'onSelect' in options && typeof(options['onSelect']) == 'function' ) {
+    if ( options && 'onSelect' in options && typeof(options.onSelect) == 'function' ) {
         this.tabBarCallbacks[tag] = {'onSelect': options.onSelect, 'name': name};
         //delete options.onSelect;
     }
+
+    this.tabBarItems.push(name);
+
     exec( null, null, this.serviceName, "createTabBarItem", [ name, label, image, tag, options ] );
 };
 
@@ -112,10 +116,14 @@ TabBar.prototype.updateTabBarItem = function ( name, options ) {
  * @see createTabBar
  */
 TabBar.prototype.showTabBarItems = function () {
-    var argv = [];
-    for ( var i = 0; i < arguments.length; i++ ) {
-        argv.push( arguments[i] );
-    }
+    exec( null, null, this.serviceName, "showTabBarItems", this.tabBarItems );
+};
+
+
+/**
+ * argv formart: ['1', '2', 'Hello'].
+ */
+TabBar.prototype.showDefinedTabBarItems = function (argv) {
     exec( null, null, this.serviceName, "showTabBarItems", argv );
 };
 

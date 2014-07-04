@@ -2,10 +2,11 @@
  *  CDVTabBar.h
  *
  *
- *  Created by Jesse MacFadyen on 10-02-03.
+ *  Updated by Web2Life AB
  *  MIT Licensed
  *
  *  Originally this code was developed my Michael Nachbaur
+ *  And Jesse MacFadyen on 10-02-03.
  *  Formerly -> PhoneGap :: UIControls.h
  *  Created by Michael Nachbaur on 13/04/09.
  *  Copyright 2009 Decaf Ninja Software. All rights reserved.
@@ -18,7 +19,7 @@
 
 @interface CDVTabBar : CDVPlugin <UITabBarDelegate> {
 	CGRect	originalWebViewBounds;
-	
+
   UITabBar* tabBar;
 	NSMutableDictionary* tabBarItems;
 }

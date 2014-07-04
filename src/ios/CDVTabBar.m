@@ -2,13 +2,14 @@
  *  CDVTabBar
  *
  *  Based on:
- *
  *  NativeControls
- *  Created by Jesse MacFadyen on 10-02-03.
+ *
+ *  Updated by Web2Life AB
  *  MIT Licensed
  *
  *  Originally this code was developed my Michael Nachbaur
- *  Formerly -> PhoneGap :: UIControls.h
+ *  And Jesse MacFadyen on 10-02-03.
+ *  Formerly -> PhoneGap :: UIControls.m
  *  Created by Michael Nachbaur on 13/04/09.
  *  Copyright 2009 Decaf Ninja Software. All rights reserved.
  */
